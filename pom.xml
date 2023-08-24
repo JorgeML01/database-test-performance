@@ -11,4 +11,16 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <exec.mainClass>com.mycompany.databaseperformancetest.DatabasePerformanceTest</exec.mainClass>
     </properties>
+     <dependencies>
+        <dependency>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
+            <version>3.1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.firebirdsql.jdbc</groupId>
+            <artifactId>jaybird</artifactId>
+            <version>5.0.2.java11</version>
+        </dependency>
+     </dependencies>
 </project>
