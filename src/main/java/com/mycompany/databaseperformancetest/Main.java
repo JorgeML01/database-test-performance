@@ -9,6 +9,8 @@ public class Main {
         LoginFrame.pack();
         LoginFrame.setLocationRelativeTo(null);
         System.out.println("");
+        System.out.println("");
+        
     }
 
 }
