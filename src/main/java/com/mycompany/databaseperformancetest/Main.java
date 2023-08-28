@@ -8,6 +8,7 @@ public class Main {
         LoginFrame.setVisible(true);
         LoginFrame.pack();
         LoginFrame.setLocationRelativeTo(null);
+        System.out.println("");
     }
 
 }
