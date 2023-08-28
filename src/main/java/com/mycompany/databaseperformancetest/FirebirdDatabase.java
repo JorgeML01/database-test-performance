@@ -19,6 +19,17 @@ public class FirebirdDatabase extends DatabaseManager {
 
     }
 
+    public void insert(String tableName) {
+        System.out.println("\nLlaves foráneas: ");
+        this.listForeignKeys(tableName);
+        System.out.println("\nLlaves primarias: ");
+        ArrayList<String> primaryKeyInfo = getPrimaryKeys(tableName);
+        for (String info : primaryKeyInfo) {
+            System.out.println(info);
+        }
+        System.out.println("\n\n");
+    }
+
     @Override
     public void truncate() {
 
@@ -37,12 +48,12 @@ public class FirebirdDatabase extends DatabaseManager {
             // Establecer la conexión
             connection = DriverManager.getConnection(url, user, password);
             System.out.println("\n\n\n\nConexión exitosa a Firebird.");
-            this.listForeignKeys("EMPLEADOS");
+
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.err.println("Error al cargar el controlador JDBC.");
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.err.println("Error al conectar a la base de datos.");
         }
     }
@@ -93,7 +104,8 @@ public class FirebirdDatabase extends DatabaseManager {
             statement.close();
             connection.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+            System.out.println();
         }
 
         return tableNames;
@@ -209,8 +221,8 @@ public class FirebirdDatabase extends DatabaseManager {
             if (connection == null) {
                 System.err.println("La conexión es nula. Asegúrate de haber llamado a connect() antes de listar las llaves foráneas.");
                 this.connect();
-            } 
-            
+            }
+
             String query = "SELECT "
                     + "    RC.RDB$CONSTRAINT_NAME AS FK_CONSTRAINT_NAME, "
                     + "    I.RDB$FIELD_NAME AS FK_COLUMN_NAME, "
@@ -235,11 +247,11 @@ public class FirebirdDatabase extends DatabaseManager {
                 String referencedTableName = resultSet.getString("REFERENCED_TABLE_NAME");
                 String referencedColumnName = resultSet.getString("REFERENCED_COLUMN_NAME");
 
-                System.out.println("Foreign Key Constraint: " + fkConstraintName);
+                System.out.println("\nForeign Key Constraint: " + fkConstraintName);
                 System.out.println("Foreign Key Column: " + fkColumnName);
                 System.out.println("Referenced Table: " + referencedTableName);
                 System.out.println("Referenced Column: " + referencedColumnName);
-                System.out.println();
+                System.out.println("\n");
             }
 
             resultSet.close();
@@ -247,6 +259,36 @@ public class FirebirdDatabase extends DatabaseManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<String> getPrimaryKeys(String tableName) {
+        ArrayList<String> primaryKeyInfo = new ArrayList<>();
+
+        try {
+            String query = "SELECT RF.RDB$FIELD_NAME, F.RDB$FIELD_TYPE "
+                    + "FROM RDB$RELATION_FIELDS RF "
+                    + "JOIN RDB$FIELDS F ON RF.RDB$FIELD_SOURCE = F.RDB$FIELD_NAME "
+                    + "WHERE RF.RDB$RELATION_NAME = '" + tableName + "' "
+                    + "AND RF.RDB$FIELD_NAME IN (SELECT S.RDB$FIELD_NAME FROM RDB$INDEX_SEGMENTS S WHERE S.RDB$INDEX_NAME = (SELECT I.RDB$INDEX_NAME FROM RDB$INDICES I WHERE I.RDB$RELATION_NAME = '" + tableName + "' AND I.RDB$UNIQUE_FLAG = 1))";
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                String fieldName = resultSet.getString("RDB$FIELD_NAME");
+                int fieldType = resultSet.getInt("RDB$FIELD_TYPE");
+                String dataType = getDataTypeName(fieldType);
+                String primaryKeyInfoLine = fieldName + "\t" + dataType;
+                primaryKeyInfo.add(primaryKeyInfoLine);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return primaryKeyInfo;
     }
 
 }
