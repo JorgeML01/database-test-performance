@@ -2,6 +2,7 @@ package com.mycompany.databaseperformancetest;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -35,7 +36,8 @@ public class FirebirdDatabase extends DatabaseManager {
 
             // Establecer la conexión
             connection = DriverManager.getConnection(url, user, password);
-            System.out.println("Conexión exitosa a Firebird.");
+            System.out.println("\n\n\n\nConexión exitosa a Firebird.");
+            this.listForeignKeys("EMPLEADOS");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             System.err.println("Error al cargar el controlador JDBC.");
@@ -196,6 +198,55 @@ public class FirebirdDatabase extends DatabaseManager {
         // Agregar más tipos según sea necesario
 
         return dataTypeMap.getOrDefault(fieldType, "DESCONOCIDO");
+    }
+
+    //TESTING
+    //
+    //
+    //
+    public void listForeignKeys(String tableName) {
+        try {
+            if (connection == null) {
+                System.err.println("La conexión es nula. Asegúrate de haber llamado a connect() antes de listar las llaves foráneas.");
+                this.connect();
+            } 
+            
+            String query = "SELECT "
+                    + "    RC.RDB$CONSTRAINT_NAME AS FK_CONSTRAINT_NAME, "
+                    + "    I.RDB$FIELD_NAME AS FK_COLUMN_NAME, "
+                    + "    RI.RDB$RELATION_NAME AS REFERENCED_TABLE_NAME, "
+                    + "    SEG.RDB$FIELD_NAME AS REFERENCED_COLUMN_NAME "
+                    + "FROM "
+                    + "    RDB$RELATION_CONSTRAINTS RC "
+                    + "    JOIN RDB$INDEX_SEGMENTS I ON RC.RDB$INDEX_NAME = I.RDB$INDEX_NAME "
+                    + "    JOIN RDB$INDEX_SEGMENTS SEG ON RC.RDB$INDEX_NAME = SEG.RDB$INDEX_NAME AND I.RDB$FIELD_POSITION = SEG.RDB$FIELD_POSITION "
+                    + "    JOIN RDB$REF_CONSTRAINTS RC2 ON RC2.RDB$CONSTRAINT_NAME = RC.RDB$CONSTRAINT_NAME "
+                    + "    JOIN RDB$RELATION_CONSTRAINTS RI ON RC2.RDB$CONST_NAME_UQ = RI.RDB$CONSTRAINT_NAME "
+                    + "WHERE "
+                    + "    RC.RDB$CONSTRAINT_TYPE = 'FOREIGN KEY' "
+                    + "    AND RC.RDB$RELATION_NAME = '" + tableName + "'";
+
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+
+            while (resultSet.next()) {
+                String fkConstraintName = resultSet.getString("FK_CONSTRAINT_NAME");
+                String fkColumnName = resultSet.getString("FK_COLUMN_NAME");
+                String referencedTableName = resultSet.getString("REFERENCED_TABLE_NAME");
+                String referencedColumnName = resultSet.getString("REFERENCED_COLUMN_NAME");
+
+                System.out.println("Foreign Key Constraint: " + fkConstraintName);
+                System.out.println("Foreign Key Column: " + fkColumnName);
+                System.out.println("Referenced Table: " + referencedTableName);
+                System.out.println("Referenced Column: " + referencedColumnName);
+                System.out.println();
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
