@@ -1,7 +1,12 @@
 com\mycompany\databaseperformancetest\DatabaseManager.class
-com\mycompany\databaseperformancetest\FirebirdDatabase.class
 com\mycompany\databaseperformancetest\SQLServerDatabase.class
+com\mycompany\databaseperformancetest\content.class
 com\mycompany\databaseperformancetest\MariaDBDatabase.class
-com\mycompany\databaseperformancetest\Main.class
+com\mycompany\databaseperformancetest\Login$1.class
+com\mycompany\databaseperformancetest\Login.class
 com\mycompany\databaseperformancetest\MySQLDatabase.class
 com\mycompany\databaseperformancetest\PostgreSQLDatabase.class
+com\mycompany\databaseperformancetest\Login$2.class
+com\mycompany\databaseperformancetest\FirebirdDatabase.class
+com\mycompany\databaseperformancetest\content$1.class
+com\mycompany\databaseperformancetest\Main.class
