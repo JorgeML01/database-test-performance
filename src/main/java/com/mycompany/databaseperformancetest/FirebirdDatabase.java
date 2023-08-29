@@ -14,7 +14,7 @@ public class FirebirdDatabase extends DatabaseManager {
     private Connection connection;
 
     @Override
-    public void insert() {
+    public void insert(String tableName, int cantidadRegistros) {
 
     }
 
@@ -70,7 +70,6 @@ public class FirebirdDatabase extends DatabaseManager {
         }
     }
 
-    @Override
     public ArrayList<String> getTableNames() {
         ArrayList<String> tableNames = new ArrayList<>();
 
@@ -110,7 +109,6 @@ public class FirebirdDatabase extends DatabaseManager {
         return tableNames;
     }
 
-    @Override
     public ArrayList<String> getTableFields(String tableName) {
         ArrayList<String> fieldNames = new ArrayList<>();
 
@@ -149,7 +147,6 @@ public class FirebirdDatabase extends DatabaseManager {
         return fieldNames;
     }
 
-    @Override
     public ArrayList<String> getFieldDataTypes(String tableName) {
         ArrayList<String> fieldInfo = new ArrayList<>();
 

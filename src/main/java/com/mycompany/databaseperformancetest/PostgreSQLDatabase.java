@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class PostgreSQLDatabase extends DatabaseManager {
 
     @Override
-    public void insert() {
+    public void insert(String tableName, int cantidadRegistros) {
 
     }
 
@@ -24,18 +24,15 @@ public class PostgreSQLDatabase extends DatabaseManager {
 
     }
 
-    @Override
     public ArrayList<String> getTableNames() {
 
         return null;
     }
 
-    @Override
     public ArrayList<String> getTableFields(String tableName) {
         return null;
     }
 
-    @Override
     public ArrayList<String> getFieldDataTypes(String tableName) {
         return null;
     }
