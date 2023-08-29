@@ -10,7 +10,7 @@ public class SQLServerDatabase extends DatabaseManager {
     }
 
     @Override
-    public void truncate() {
+    public void truncate(String tableName) {
 
     }
 

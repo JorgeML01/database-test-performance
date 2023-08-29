@@ -30,7 +30,7 @@ public class FirebirdDatabase extends DatabaseManager {
     }
 
     @Override
-    public void truncate() {
+    public void truncate(String tableName) {
 
     }
 
