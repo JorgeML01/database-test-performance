@@ -10,4 +10,6 @@ public abstract class DatabaseManager {
 
     public abstract void disconnect();
     
+    
+    
 }

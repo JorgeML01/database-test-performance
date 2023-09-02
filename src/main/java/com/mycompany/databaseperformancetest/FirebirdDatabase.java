@@ -15,10 +15,6 @@ public class FirebirdDatabase extends DatabaseManager {
 
     @Override
     public void insert(String tableName, int cantidadRegistros) {
-
-    }
-
-    public void insert(String tableName) {
         System.out.println("\nLlaves foráneas: ");
         this.listForeignKeys(tableName);
         System.out.println("\nLlaves primarias: ");
@@ -31,7 +27,15 @@ public class FirebirdDatabase extends DatabaseManager {
 
     @Override
     public void truncate(String tableName) {
-
+        try {
+            Statement statement = connection.createStatement();
+            String query = "DELETE FROM " + tableName;
+            statement.executeUpdate(query);
+            System.out.println("Truncate exitoso en la tabla: " + tableName);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al truncar la tabla: " + tableName);
+        }
     }
 
     @Override
@@ -208,10 +212,6 @@ public class FirebirdDatabase extends DatabaseManager {
         return dataTypeMap.getOrDefault(fieldType, "DESCONOCIDO");
     }
 
-    //TESTING
-    //
-    //
-    //
     public void listForeignKeys(String tableName) {
         try {
             if (connection == null) {
@@ -287,4 +287,14 @@ public class FirebirdDatabase extends DatabaseManager {
         return primaryKeyInfo;
     }
 
+    /**
+     * Tengo que hacer una validación de: INT/DECIMAL/BOOL/VARCHAR
+     * Si no es ninguna de esas 4, podrá entonces tener campos nulos.
+     * Esos otros 4 tienen la obligación de no ser nulos.
+     * 
+     * También si es identity (incremental) entonces creo que no
+     * tendríamos que incluirlo en el insert.
+     */
+    
+    
 }
