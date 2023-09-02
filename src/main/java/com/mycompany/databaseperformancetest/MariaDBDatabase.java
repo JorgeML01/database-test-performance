@@ -3,6 +3,7 @@ package com.mycompany.databaseperformancetest;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MariaDBDatabase extends DatabaseManager {
@@ -16,7 +17,18 @@ public class MariaDBDatabase extends DatabaseManager {
 
     @Override
     public void truncate(String tableName) {
+         try {
+            Statement statement = connection.createStatement();
 
+            String truncateQuery = "TRUNCATE TABLE " + tableName;
+            statement.executeUpdate(truncateQuery);
+
+            System.out.println("Table " + tableName + " truncated successfully.");
+
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -32,7 +44,6 @@ public class MariaDBDatabase extends DatabaseManager {
             
             System.out.println("Connected to the database!");
             
-            connection.close();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (SQLException e) {
