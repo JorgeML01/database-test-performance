@@ -36,4 +36,9 @@ public class PostgreSQLDatabase extends DatabaseManager {
     public ArrayList<String> getFieldDataTypes(String tableName) {
         return null;
     }
+    
+    @Override
+    public ArrayList<String> getTables(String database) {
+         return null;
+    }
 }

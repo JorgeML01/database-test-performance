@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import javax.swing.JOptionPane;
 
 public class FirebirdDatabase extends DatabaseManager {
 
@@ -37,7 +38,7 @@ public class FirebirdDatabase extends DatabaseManager {
                         foreignKeyColumns, referencedTables, referencedColumns);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             System.err.println("Error al insertar registros en la tabla: " + tableName);
         } finally {
             disconnect();
@@ -200,7 +201,7 @@ public class FirebirdDatabase extends DatabaseManager {
                         if (pkFKDataType.get(posIndex).equals("INTEGER")) {
                             // Usar el valor de values.get(randomNumber) para fkValue
                             System.out.println("random ins: " + randomNumber);
-                            
+
                             // Ver cómo manejar para que sea random y no necesariamente 0.
                             fkValue = values.get(0);
 
@@ -209,10 +210,10 @@ public class FirebirdDatabase extends DatabaseManager {
                         } else {
                             // Generar un nuevo valor para fkValue
                             System.out.println("random ins: " + randomNumber);
-                            
+
                             // Ver cómo manejar para que sea random y no necesariamente 0.
                             fkValue = values.get(0);
-                            
+
                             // Agregar el valor al query
                             insertQuery.append("'").append(fkValue).append("',");
                         }
@@ -257,12 +258,24 @@ public class FirebirdDatabase extends DatabaseManager {
     }
 
     public static int generateRandomNumber(int min, int max) {
-        if (min >= max) {
-            throw new IllegalArgumentException("El valor mínimo debe ser menor que el valor máximo.");
-        }
+        try {
+            if (min >= max) {
+                throw new IllegalArgumentException("El valor mínimo debe ser menor que el valor máximo.");
+            }
 
-        Random rand = new Random();
-        return rand.nextInt((max - min) + 1) + min;
+            Random rand = new Random();
+            return rand.nextInt((max - min) + 1) + min;
+        } catch (IllegalArgumentException e) {
+            String mensaje = "NO SE PUDO HACER EL INSERT!";
+            JOptionPane.showMessageDialog(null, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
+            // Puedes agregar más lógica aquí si es necesario
+            
+            
+            // Sería entonces de enviar una variable en caso de que haya error para hacer truncate de todas las tablas.
+            // Porque aunque haya error, siempre se terminan llenando las tablas donde no hubo error.
+            
+            return 0; // Por ejemplo, puedes devolver un valor predeterminado en caso de error
+        }
     }
 
     public static Map<String, Integer> countTableReferences(ArrayList<String> referencedTables) {
@@ -663,6 +676,32 @@ public class FirebirdDatabase extends DatabaseManager {
         }
 
         return referencedColumns;
+    }
+
+    @Override
+    public ArrayList<String> getTables(String database) {
+        ArrayList<String> tableNames = new ArrayList<>();
+
+        try {
+            // Obtener el metadatos de la base de datos
+            DatabaseMetaData metaData = connection.getMetaData();
+
+            // Obtener el resultado de las tablas en la base de datos
+            ResultSet tables = metaData.getTables(null, null, null, new String[]{"TABLE"});
+
+            while (tables.next()) {
+                String tableName = tables.getString("TABLE_NAME");
+                tableNames.add(tableName);
+                System.out.println("TABLE NAME: " + tableName);
+            }
+
+            tables.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al obtener las tablas de la base de datos: " + e.getMessage());
+        }
+
+        return tableNames;
     }
 
 }

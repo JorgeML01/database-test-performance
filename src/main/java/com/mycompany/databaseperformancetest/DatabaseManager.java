@@ -1,5 +1,7 @@
 package com.mycompany.databaseperformancetest;
 
+import java.util.ArrayList;
+
 public abstract class DatabaseManager {
 
     public abstract void insert(String tableName, int cantidadRegistros);
@@ -10,6 +12,6 @@ public abstract class DatabaseManager {
 
     public abstract void disconnect();
     
-    
+    public abstract ArrayList<String> getTables(String database);
     
 }

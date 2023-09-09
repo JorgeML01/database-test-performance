@@ -62,5 +62,10 @@ public class MySQLDatabase extends DatabaseManager {
             }
         }
     }
+    
+    @Override
+    public ArrayList<String> getTables(String database) {
+         return null;
+    }
 
 }

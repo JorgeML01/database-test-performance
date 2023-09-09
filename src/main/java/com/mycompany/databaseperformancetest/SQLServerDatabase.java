@@ -161,4 +161,9 @@ public class SQLServerDatabase extends DatabaseManager {
         // Retornar null si ocurre un error
         return null;
     }
+
+    @Override
+    public ArrayList<String> getTables(String database) {
+        return null;
+    }
 }
