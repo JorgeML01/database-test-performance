@@ -236,7 +236,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         jScrollPane1.setViewportView(jTable1);
 
         PanelTestPerformance.add(jScrollPane1);
-        jScrollPane1.setBounds(150, 170, 452, 180);
+        jScrollPane1.setBounds(122, 170, 510, 180);
 
         buttonRun.setText("Run");
         buttonRun.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -277,6 +277,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
 
     private void buttonIniciarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonIniciarMouseClicked
         this.MainTabbedPane.setSelectedIndex(1);
+        this.labelTiempoFinal.setText("Tiempo de inserción: 0.00 segundos");
 
         if (this.comboBoxMain.getSelectedIndex() == 0) {
             System.out.println("MYSQL");
@@ -303,14 +304,14 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         }
 
         db.connect();
-        ArrayList<String> tables = db.getTables("TEST_DB");
+        ArrayList<String> tables = db.getTables("EMPRESA");
         setupTable(this.jTable1, tables);
-        
-        //db.truncate("EMPLEADO");
-        //db.truncate("TELEFONO");
-        //db.truncate("DEPARTAMENTO");
-        
 
+//        db.truncate("EMPLEADO");
+//        db.truncate("TELEFONO");
+//        db.truncate("DEPARTAMENTO");
+//        db.truncate("EMPLEADOS");
+//        db.truncate("PRODUCTOS");
         db.disconnect();
     }//GEN-LAST:event_buttonIniciarMouseClicked
 
@@ -398,7 +399,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         DefaultTableModel model = new DefaultTableModel() {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
-                if (columnIndex == 2) { // La columna "Truncate"
+                if (columnIndex == 2 || columnIndex == 3) { // Columnas "Truncate" e "Insertar"
                     return Boolean.class;
                 }
                 return super.getColumnClass(columnIndex);
@@ -408,9 +409,10 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         model.addColumn("Tablas");
         model.addColumn("Cantidad");
         model.addColumn("Truncate");
+        model.addColumn("Insertar"); // Agregar la columna "Insertar"
 
         for (String item : arrayList) {
-            model.addRow(new Object[]{item, "", false});
+            model.addRow(new Object[]{item, "", false, false}); // Inicializar con casillas desmarcadas
         }
 
         table.setModel(model);
@@ -437,10 +439,22 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         for (int row = 0; row < rowCount; row++) {
             String nombreTabla = model.getValueAt(row, 0).toString();
             String cantidadRegistrosStr = model.getValueAt(row, 1).toString();
+            String truncateRows = model.getValueAt(row, 2).toString();
+            String insertRows = model.getValueAt(row, 3).toString();
 
-            // Almacena los valores en los arrays correspondientes
-            tableNames[row] = nombreTabla;
-            cantidadRegistros[row] = Integer.parseInt(cantidadRegistrosStr);
+            // Truncate de las tables con el checkbox marcado.
+            db.connect();
+            if (truncateRows.equals("true")) {
+                System.out.println("Truncated table: " + nombreTabla);
+                db.truncate(nombreTabla);
+            }
+            db.disconnect();
+
+            // Almacena los valores en los arrays correspondientes en caso de que el checkbox esté marcado
+            if (insertRows.equals("true")) {
+                tableNames[row] = nombreTabla;
+                cantidadRegistros[row] = Integer.parseInt(cantidadRegistrosStr);
+            }
         }
         long tiempoInicial = System.currentTimeMillis();
         // Crea una instancia de la clase InsertThread generalizada

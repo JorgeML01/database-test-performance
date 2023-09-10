@@ -60,7 +60,7 @@ public class FirebirdDatabase extends DatabaseManager {
 
     @Override
     public void connect() {
-        String url = "jdbc:firebirdsql://localhost:3050/C:\\Firebird\\FirebirdFiles\\_databases\\TEST_DB.FDB";
+        String url = "jdbc:firebirdsql://localhost:3050/C:\\Firebird\\FirebirdFiles\\_databases\\EMPRESA.FDB";
         String user = "SYSDBA";
         String password = "admin123";
 

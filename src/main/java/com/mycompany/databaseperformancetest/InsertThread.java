@@ -12,7 +12,7 @@ public class InsertThread extends Thread {
     private DatabaseManager db;
     private String[] tableNames;
     private int[] cantidadRegistros;
-    private long tiempoInicial; // Nueva variable
+    private long tiempoInicial;
     private Events listener;
 
     public InsertThread(JProgressBar progressBar, DatabaseManager db, String[] tableNames, int[] cantidadRegistros, long tiempoInicial, Events listener) {
@@ -20,7 +20,7 @@ public class InsertThread extends Thread {
         this.db = db;
         this.tableNames = tableNames;
         this.cantidadRegistros = cantidadRegistros;
-        this.tiempoInicial = tiempoInicial; // Inicializa la variable tiempoInicial
+        this.tiempoInicial = tiempoInicial;
         this.listener = listener;
     }
 
@@ -28,6 +28,7 @@ public class InsertThread extends Thread {
     public void run() {
         int totalRegistros = calcularTotalRegistros(); // Calcula el total de registros en todas las tablas
         int progresoTotal = 0; // Inicializa el progreso total
+        long tiempoAcumulado = 0; // Inicializa el tiempo acumulado
 
         // Ciclo para recorrer todas las tablas
         for (int tableIndex = 0; tableIndex < tableNames.length; tableIndex++) {
@@ -48,23 +49,35 @@ public class InsertThread extends Thread {
                 // Actualiza la barra de progreso
                 progressBar.setValue(porcentaje);
 
+                // Calcula el tiempo transcurrido
+                long tiempoActual = System.currentTimeMillis();
+                long tiempoTranscurrido = tiempoActual - tiempoInicial;
+
+                // Agrega el tiempo transcurrido al tiempo acumulado
+                tiempoAcumulado += tiempoTranscurrido;
+
+                // Notifica al listener con el tiempo acumulado
+                double segundosTranscurridos = tiempoAcumulado / 1000.0;
+                this.listener.InsertThreadListener(segundosTranscurridos);
+
+                // Actualiza el tiempo inicial para el siguiente ciclo
+                tiempoInicial = tiempoActual;
+
                 // Agrega una pausa para simular el tiempo que lleva la inserción
                 try {
                     Thread.sleep(100); // Puedes ajustar el tiempo de pausa según sea necesario
                 } catch (InterruptedException e) {
-                    //e.printStackTrace();
-                    System.out.println("HOLA");
+                    e.printStackTrace();
                 }
             }
         }
 
-        // No necesitas establecer el valor máximo de la barra de progreso aquí
         // Calcula el tiempo transcurrido al finalizar el hilo
         long tiempoFinal = System.currentTimeMillis();
         long tiempoTranscurrido = tiempoFinal - tiempoInicial;
         System.out.println("Tiempo transcurrido: " + tiempoTranscurrido + " milisegundos");
 
-        double segundosTranscurridos = tiempoTranscurrido / 1000.0;
+        double segundosTranscurridos = tiempoAcumulado / 1000.0;
         System.out.println("Tiempo transcurrido: " + segundosTranscurridos + " segundos");
 
         this.listener.InsertThreadListener(segundosTranscurridos);
