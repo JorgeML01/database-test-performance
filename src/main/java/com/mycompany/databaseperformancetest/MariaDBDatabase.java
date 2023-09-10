@@ -21,8 +21,8 @@ public class MariaDBDatabase extends DatabaseManager {
 
     private String dbName;
     private Connection connection;
-    
-    public MariaDBDatabase(String dbName){
+
+    public MariaDBDatabase(String dbName) {
         this.dbName = dbName;
     }
 
@@ -31,7 +31,7 @@ public class MariaDBDatabase extends DatabaseManager {
         try {
             Statement statement = connection.createStatement();
 
-            String truncateQuery = "TRUNCATE TABLE " + tableName;
+            String truncateQuery = "DELETE FROM " + tableName;
             statement.executeUpdate(truncateQuery);
 
             System.out.println("Table " + tableName + " truncated successfully.");
@@ -44,7 +44,7 @@ public class MariaDBDatabase extends DatabaseManager {
 
     @Override
     public void connect() {
-        String jdbcUrl = "jdbc:mariadb://26.210.205.167:3306/empresa?useSSL=false&allowPublicKeyRetrieval=true";
+        String jdbcUrl = "jdbc:mariadb://26.210.205.167:3307/empresa?useSSL=false&allowPublicKeyRetrieval=true";
         String username = "Jorge";
         String password = "12345";
 

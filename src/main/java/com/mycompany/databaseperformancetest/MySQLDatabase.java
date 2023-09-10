@@ -31,7 +31,7 @@ public class MySQLDatabase extends DatabaseManager {
         try {
             Statement statement = connection.createStatement();
 
-            String truncateQuery = "TRUNCATE TABLE " + tableName;
+            String truncateQuery = "DELETE FROM " + tableName;
             statement.executeUpdate(truncateQuery);
 
             System.out.println("Table " + tableName + " truncated successfully.");
