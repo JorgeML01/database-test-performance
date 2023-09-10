@@ -17,7 +17,12 @@ import javax.swing.JOptionPane;
 
 public class FirebirdDatabase extends DatabaseManager {
 
+    private String dbName;
     private Connection connection;
+
+    public FirebirdDatabase(String dbName) {
+        this.dbName = dbName;
+    }
 
     @Override
     public void insert(String tableName, int cantidadRegistros) {
@@ -269,11 +274,9 @@ public class FirebirdDatabase extends DatabaseManager {
             String mensaje = "NO SE PUDO HACER EL INSERT!";
             JOptionPane.showMessageDialog(null, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
             // Puedes agregar más lógica aquí si es necesario
-            
-            
+
             // Sería entonces de enviar una variable en caso de que haya error para hacer truncate de todas las tablas.
             // Porque aunque haya error, siempre se terminan llenando las tablas donde no hubo error.
-            
             return 0; // Por ejemplo, puedes devolver un valor predeterminado en caso de error
         }
     }

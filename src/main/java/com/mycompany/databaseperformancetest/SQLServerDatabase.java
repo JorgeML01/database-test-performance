@@ -8,7 +8,12 @@ import java.util.ArrayList;
 
 public class SQLServerDatabase extends DatabaseManager {
 
+    private String dbName;
     private Connection connection;
+
+    public SQLServerDatabase(String dbName) {
+        this.dbName = dbName;
+    }
 
     @Override
     public void insert(String tableName, int cantidadRegistros) {

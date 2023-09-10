@@ -19,7 +19,12 @@ import java.util.Set;
 
 public class MySQLDatabase extends DatabaseManager {
 
+    private String dbName;
     private Connection connection;
+
+    public MySQLDatabase(String dbName) {
+        this.dbName = dbName;
+    }
 
     @Override
     public void truncate(String tableName) {
@@ -260,7 +265,6 @@ public class MySQLDatabase extends DatabaseManager {
 
     //PASOS PARA EL INSERT:
     //1. OBTENER METADATA
-    
     /*#1*/
     public ArrayList<String> getColumnNames(String tableName) {
         ArrayList<String> columnNames = new ArrayList<>();
@@ -372,7 +376,7 @@ public class MySQLDatabase extends DatabaseManager {
 
         return null;
     }
-    
+
     /*#5*/
     public ArrayList<Boolean> isPkIdentity(String tableName, ArrayList<String> primaryKeyColumns) {
         ArrayList<Boolean> isIdentityList = new ArrayList<>();
@@ -405,10 +409,9 @@ public class MySQLDatabase extends DatabaseManager {
             e.printStackTrace();
             System.err.println("Error al determinar si las columnas de clave primaria son de identidad en la tabla: " + tableName);
         }*/
-
         return isIdentityList;
     }
-    
+
     /*#6*/
     public ArrayList<String> getFK(String tableName) {
         ArrayList<String> foreignKeyColumns = new ArrayList<>();
@@ -455,7 +458,7 @@ public class MySQLDatabase extends DatabaseManager {
 
         return referencedTables;
     }
-    
+
     /*#8*/
     public ArrayList<String> getColumnReference(String tableName) {
         ArrayList<String> referencedColumns = new ArrayList<>();

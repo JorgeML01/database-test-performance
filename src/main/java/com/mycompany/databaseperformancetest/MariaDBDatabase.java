@@ -19,7 +19,12 @@ import java.util.Set;
 
 public class MariaDBDatabase extends DatabaseManager {
 
+    private String dbName;
     private Connection connection;
+    
+    public MariaDBDatabase(String dbName){
+        this.dbName = dbName;
+    }
 
     @Override
     public void truncate(String tableName) {

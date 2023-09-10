@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 public class PostgreSQLDatabase extends DatabaseManager {
 
+    private String dbName;
+    
+    public PostgreSQLDatabase (String dbName) {
+        this.dbName = dbName;
+    }
+    
     @Override
     public void insert(String tableName, int cantidadRegistros) {
 

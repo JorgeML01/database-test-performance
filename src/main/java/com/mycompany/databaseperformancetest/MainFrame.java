@@ -28,13 +28,18 @@ public class MainFrame extends javax.swing.JFrame implements Events {
     /**
      * Creates new form MainFrame
      */
-    public MainFrame() {
+    public MainFrame(String dbName) {
+        this.dbName = dbName;
         this.setLayout(new BorderLayout());
         this.setResizable(false);
         this.setTitle("Database Performance Test");
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         initComponents();
         this.setLocationRelativeTo(null);
+    }
+
+    public MainFrame() {
+
     }
 
     /**
@@ -282,23 +287,23 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         if (this.comboBoxMain.getSelectedIndex() == 0) {
             System.out.println("MYSQL");
             this.panelColor.setBackground(Color.BLUE);
-            db = new MySQLDatabase();
+            db = new MySQLDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 1) {
             System.out.println("MARIADB");
             this.panelColor.setBackground(Color.GRAY);
-            db = new MariaDBDatabase();
+            db = new MariaDBDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 2) {
             System.out.println("POSTGRESQL");
             this.panelColor.setBackground(Color.MAGENTA);
-            db = new PostgreSQLDatabase();
+            db = new PostgreSQLDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 3) {
             System.out.println("FIREBIRD");
             this.panelColor.setBackground(Color.ORANGE);
-            db = new FirebirdDatabase();
+            db = new FirebirdDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 4) {
             System.out.println("SQLServerDatabase");
             this.panelColor.setBackground(Color.DARK_GRAY);
-            db = new PostgreSQLDatabase();
+            db = new PostgreSQLDatabase(dbName);
         } else {
             System.out.println("NADA");
         }
@@ -393,6 +398,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
 
     // Extra variables
     private DatabaseManager db;
+    private String dbName;
 
     // Extra functions.
     public static void setupTable(JTable table, ArrayList<String> arrayList) {
