@@ -65,6 +65,7 @@ public class FirebirdDatabase extends DatabaseManager {
 
     @Override
     public void connect() {
+        // PONER AQUÍ LA VARIABLE DE LA DB EN VEZ DE EMPRESA TAMBIÉN. REVISAR ESO EN MARIADB Y MYSQL.
         String url = "jdbc:firebirdsql://localhost:3050/C:\\Firebird\\FirebirdFiles\\_databases\\EMPRESA.FDB";
         String user = "SYSDBA";
         String password = "admin123";

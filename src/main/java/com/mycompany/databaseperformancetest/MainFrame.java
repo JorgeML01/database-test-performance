@@ -7,11 +7,23 @@ package com.mycompany.databaseperformancetest;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DropMode;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -29,13 +41,29 @@ public class MainFrame extends javax.swing.JFrame implements Events {
      * Creates new form MainFrame
      */
     public MainFrame(String dbName) {
+
+        graficoFirebird = 0;
+        graficoMariaDB = 0;
+        graficoMySQL = 0;
+
         this.dbName = dbName;
-        this.setLayout(new BorderLayout());
-        this.setResizable(false);
-        this.setTitle("Database Performance Test");
+
+        this.setLayout(
+                new BorderLayout());
+
+        this.setResizable(
+                false);
+
+        this.setTitle(
+                "Database Performance Test");
+
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
         initComponents();
-        this.setLocationRelativeTo(null);
+
+        this.setLocationRelativeTo(
+                null);
+
     }
 
     public MainFrame() {
@@ -62,6 +90,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         buttonIniciar = new javax.swing.JButton();
         comboBoxMain = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
         PanelTestPerformance = new javax.swing.JPanel();
         panelColor = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -71,6 +100,8 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         buttonRegresar = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         labelTiempoFinal = new javax.swing.JLabel();
+        panelBarChart = new javax.swing.JPanel();
+        buttonRegresarGraficos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(800, 500));
@@ -142,7 +173,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
             }
         });
 
-        comboBoxMain.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "MySql", "MariaDB", "PostgreSql", "Firebird", "SqlServer" }));
+        comboBoxMain.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Firebird", "MariaDB", "MySql" }));
         comboBoxMain.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxMainActionPerformed(evt);
@@ -153,6 +184,15 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 153, 153));
         jLabel2.setText("ADMIN");
+
+        jButton1.setBackground(new java.awt.Color(255, 102, 0));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Reportes");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout LeftLayout = new javax.swing.GroupLayout(Left);
         Left.setLayout(LeftLayout);
@@ -171,7 +211,9 @@ public class MainFrame extends javax.swing.JFrame implements Events {
                         .addComponent(jLabel1))
                     .addGroup(LeftLayout.createSequentialGroup()
                         .addGap(165, 165, 165)
-                        .addComponent(buttonIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(LeftLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(buttonIniciar, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(210, Short.MAX_VALUE))
         );
         LeftLayout.setVerticalGroup(
@@ -185,7 +227,9 @@ public class MainFrame extends javax.swing.JFrame implements Events {
                 .addComponent(comboBoxMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(buttonIniciar, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(238, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(186, Short.MAX_VALUE))
         );
 
         MainPane.add(Left);
@@ -271,6 +315,35 @@ public class MainFrame extends javax.swing.JFrame implements Events {
 
         MainTabbedPane.addTab("tab3", PanelTestPerformance);
 
+        panelBarChart.setBackground(new java.awt.Color(204, 204, 255));
+        panelBarChart.setForeground(new java.awt.Color(0, 153, 204));
+
+        buttonRegresarGraficos.setText("Regresar");
+        buttonRegresarGraficos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                buttonRegresarGraficosMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelBarChartLayout = new javax.swing.GroupLayout(panelBarChart);
+        panelBarChart.setLayout(panelBarChartLayout);
+        panelBarChartLayout.setHorizontalGroup(
+            panelBarChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelBarChartLayout.createSequentialGroup()
+                .addGap(43, 43, 43)
+                .addComponent(buttonRegresarGraficos)
+                .addContainerGap(682, Short.MAX_VALUE))
+        );
+        panelBarChartLayout.setVerticalGroup(
+            panelBarChartLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelBarChartLayout.createSequentialGroup()
+                .addContainerGap(444, Short.MAX_VALUE)
+                .addComponent(buttonRegresarGraficos)
+                .addGap(43, 43, 43))
+        );
+
+        MainTabbedPane.addTab("gráficos", panelBarChart);
+
         getContentPane().add(MainTabbedPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -40, 800, 540));
 
         pack();
@@ -284,39 +357,48 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         this.MainTabbedPane.setSelectedIndex(1);
         this.labelTiempoFinal.setText("Tiempo de inserción: 0.00 segundos");
 
+//        if (this.comboBoxMain.getSelectedIndex() == 0) {
+//            System.out.println("MYSQL");
+//            this.panelColor.setBackground(Color.BLUE);
+//            db = new MySQLDatabase(dbName);
+//        } else if (this.comboBoxMain.getSelectedIndex() == 1) {
+//            System.out.println("MARIADB");
+//            this.panelColor.setBackground(Color.GRAY);
+//            db = new MariaDBDatabase(dbName);
+//        } else if (this.comboBoxMain.getSelectedIndex() == 2) {
+//            System.out.println("POSTGRESQL");
+//            this.panelColor.setBackground(Color.MAGENTA);
+//            db = new PostgreSQLDatabase(dbName);
+//        } else if (this.comboBoxMain.getSelectedIndex() == 3) {
+//            System.out.println("FIREBIRD");
+//            this.panelColor.setBackground(Color.ORANGE);
+//            db = new FirebirdDatabase(dbName);
+//        } else if (this.comboBoxMain.getSelectedIndex() == 4) {
+//            System.out.println("SQLServerDatabase");
+//            this.panelColor.setBackground(Color.DARK_GRAY);
+//            db = new PostgreSQLDatabase(dbName);
+//        } else {
+//            System.out.println("NADA");
+//        }
         if (this.comboBoxMain.getSelectedIndex() == 0) {
-            System.out.println("MYSQL");
-            this.panelColor.setBackground(Color.BLUE);
+            System.out.println("FIREBIRD");
+            this.panelColor.setBackground(Color.ORANGE);
             db = new MySQLDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 1) {
             System.out.println("MARIADB");
             this.panelColor.setBackground(Color.GRAY);
             db = new MariaDBDatabase(dbName);
-        } else if (this.comboBoxMain.getSelectedIndex() == 2) {
-            System.out.println("POSTGRESQL");
-            this.panelColor.setBackground(Color.MAGENTA);
-            db = new PostgreSQLDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 3) {
-            System.out.println("FIREBIRD");
-            this.panelColor.setBackground(Color.ORANGE);
+            System.out.println("MYSQL");
+            this.panelColor.setBackground(Color.BLUE);
             db = new FirebirdDatabase(dbName);
-        } else if (this.comboBoxMain.getSelectedIndex() == 4) {
-            System.out.println("SQLServerDatabase");
-            this.panelColor.setBackground(Color.DARK_GRAY);
-            db = new PostgreSQLDatabase(dbName);
         } else {
             System.out.println("NADA");
         }
-
         db.connect();
         ArrayList<String> tables = db.getTables("EMPRESA");
         setupTable(this.jTable1, tables);
 
-//        db.truncate("EMPLEADO");
-//        db.truncate("TELEFONO");
-//        db.truncate("DEPARTAMENTO");
-//        db.truncate("EMPLEADOS");
-//        db.truncate("PRODUCTOS");
         db.disconnect();
     }//GEN-LAST:event_buttonIniciarMouseClicked
 
@@ -338,6 +420,34 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         System.out.println("Tiempo transcurrido: " + segundosTranscurridos + " segundos");
     }//GEN-LAST:event_buttonRunMouseClicked
 
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        //this.MainTabbedPane.setSelectedIndex(2);
+
+        JFrame f = new JFrame();
+
+        f.setSize(400, 300);
+
+        double[] values = new double[3];
+        String[] names = new String[3];
+        values[0] = graficoFirebird;
+        names[0] = "Firebird";
+
+        values[1] = graficoMySQL;
+        names[1] = "MySQL";
+
+        values[2] = graficoMariaDB;
+        names[2] = "MariaDB";
+
+        f.getContentPane().add(new ChartPanel(values, names, "Rendimiento de los gestores"));
+
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+    }//GEN-LAST:event_jButton1MouseClicked
+
+    private void buttonRegresarGraficosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonRegresarGraficosMouseClicked
+        this.MainTabbedPane.setSelectedIndex(0);
+    }//GEN-LAST:event_buttonRegresarGraficosMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -352,16 +462,24 @@ public class MainFrame extends javax.swing.JFrame implements Events {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainFrame.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -381,8 +499,10 @@ public class MainFrame extends javax.swing.JFrame implements Events {
     private javax.swing.JPanel Right;
     private javax.swing.JButton buttonIniciar;
     private javax.swing.JButton buttonRegresar;
+    private javax.swing.JButton buttonRegresarGraficos;
     private javax.swing.JButton buttonRun;
     private javax.swing.JComboBox<String> comboBoxMain;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -393,12 +513,16 @@ public class MainFrame extends javax.swing.JFrame implements Events {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel labelTiempoFinal;
+    private javax.swing.JPanel panelBarChart;
     private javax.swing.JPanel panelColor;
     // End of variables declaration//GEN-END:variables
 
     // Extra variables
     private DatabaseManager db;
     private String dbName;
+    private double graficoFirebird;
+    private double graficoMariaDB;
+    private double graficoMySQL;
 
     // Extra functions.
     public static void setupTable(JTable table, ArrayList<String> arrayList) {
@@ -473,7 +597,95 @@ public class MainFrame extends javax.swing.JFrame implements Events {
 
     @Override
     public void InsertThreadListener(double finalTime) {
-        //System.out.println("TIEMPO FINAL: " + finalTime);
         this.labelTiempoFinal.setText("Tiempo de inserción: " + finalTime + " segundos");
+
+        if (this.comboBoxMain.getSelectedIndex() == 0) {
+            this.graficoFirebird = finalTime;
+        } else if (this.comboBoxMain.getSelectedIndex() == 1) {
+            this.graficoMariaDB = finalTime;
+        } else if (this.comboBoxMain.getSelectedIndex() == 2) {
+            this.graficoMySQL = finalTime;
+        }
+
     }
+
+    public class ChartPanel extends JPanel {
+
+        private double[] values;
+
+        private String[] names;
+
+        private String title;
+
+        public ChartPanel(double[] v, String[] n, String t) {
+            names = n;
+            values = v;
+            title = t;
+        }
+
+        @Override
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (values == null || values.length == 0) {
+                return;
+            }
+            double minValue = 0;
+            double maxValue = 0;
+            for (int i = 0; i < values.length; i++) {
+                if (minValue > values[i]) {
+                    minValue = values[i];
+                }
+                if (maxValue < values[i]) {
+                    maxValue = values[i];
+                }
+            }
+
+            Dimension d = getSize();
+            int clientWidth = d.width;
+            int clientHeight = d.height;
+            int barWidth = clientWidth / values.length;
+
+            Font titleFont = new Font("SansSerif", Font.BOLD, 20);
+            FontMetrics titleFontMetrics = g.getFontMetrics(titleFont);
+            Font labelFont = new Font("SansSerif", Font.PLAIN, 10);
+            FontMetrics labelFontMetrics = g.getFontMetrics(labelFont);
+
+            int titleWidth = titleFontMetrics.stringWidth(title);
+            int y = titleFontMetrics.getAscent();
+            int x = (clientWidth - titleWidth) / 2;
+            g.setFont(titleFont);
+            g.drawString(title, x, y);
+
+            int top = titleFontMetrics.getHeight();
+            int bottom = labelFontMetrics.getHeight();
+            if (maxValue == minValue) {
+                return;
+            }
+            double scale = (clientHeight - top - bottom) / (maxValue - minValue);
+            y = clientHeight - labelFontMetrics.getDescent();
+            g.setFont(labelFont);
+
+            for (int i = 0; i < values.length; i++) {
+                int valueX = i * barWidth + 1;
+                int valueY = top;
+                int height = (int) (values[i] * scale);
+                if (values[i] >= 0) {
+                    valueY += (int) ((maxValue - values[i]) * scale);
+                } else {
+                    valueY += (int) (maxValue * scale);
+                    height = -height;
+                }
+
+                g.setColor(Color.BLACK);
+                g.fillRect(valueX, valueY, barWidth - 2, height);
+                g.setColor(Color.black);
+                g.drawRect(valueX, valueY, barWidth - 2, height);
+                int labelWidth = labelFontMetrics.stringWidth(names[i]);
+                x = i * barWidth + (barWidth - labelWidth) / 2;
+                g.drawString(names[i], x, y);
+            }
+        }
+
+    }
+
 }
