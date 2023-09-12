@@ -100,6 +100,8 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         buttonRegresar = new javax.swing.JButton();
         jProgressBar1 = new javax.swing.JProgressBar();
         labelTiempoFinal = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        fieldBlockSize = new javax.swing.JTextField();
         panelBarChart = new javax.swing.JPanel();
         buttonRegresarGraficos = new javax.swing.JButton();
 
@@ -294,7 +296,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
             }
         });
         PanelTestPerformance.add(buttonRun);
-        buttonRun.setBounds(330, 360, 75, 22);
+        buttonRun.setBounds(340, 440, 75, 22);
 
         buttonRegresar.setText("Regresar");
         buttonRegresar.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -312,6 +314,13 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         labelTiempoFinal.setText("Tiempo de inserción: 0.00 segundos");
         PanelTestPerformance.add(labelTiempoFinal);
         labelTiempoFinal.setBounds(280, 140, 240, 16);
+
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("Block size:");
+        PanelTestPerformance.add(jLabel4);
+        jLabel4.setBounds(280, 360, 70, 16);
+        PanelTestPerformance.add(fieldBlockSize);
+        fieldBlockSize.setBounds(360, 360, 90, 22);
 
         MainTabbedPane.addTab("tab3", PanelTestPerformance);
 
@@ -356,42 +365,20 @@ public class MainFrame extends javax.swing.JFrame implements Events {
     private void buttonIniciarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_buttonIniciarMouseClicked
         this.MainTabbedPane.setSelectedIndex(1);
         this.labelTiempoFinal.setText("Tiempo de inserción: 0.00 segundos");
+        this.fieldBlockSize.setText("");
 
-//        if (this.comboBoxMain.getSelectedIndex() == 0) {
-//            System.out.println("MYSQL");
-//            this.panelColor.setBackground(Color.BLUE);
-//            db = new MySQLDatabase(dbName);
-//        } else if (this.comboBoxMain.getSelectedIndex() == 1) {
-//            System.out.println("MARIADB");
-//            this.panelColor.setBackground(Color.GRAY);
-//            db = new MariaDBDatabase(dbName);
-//        } else if (this.comboBoxMain.getSelectedIndex() == 2) {
-//            System.out.println("POSTGRESQL");
-//            this.panelColor.setBackground(Color.MAGENTA);
-//            db = new PostgreSQLDatabase(dbName);
-//        } else if (this.comboBoxMain.getSelectedIndex() == 3) {
-//            System.out.println("FIREBIRD");
-//            this.panelColor.setBackground(Color.ORANGE);
-//            db = new FirebirdDatabase(dbName);
-//        } else if (this.comboBoxMain.getSelectedIndex() == 4) {
-//            System.out.println("SQLServerDatabase");
-//            this.panelColor.setBackground(Color.DARK_GRAY);
-//            db = new PostgreSQLDatabase(dbName);
-//        } else {
-//            System.out.println("NADA");
-//        }
         if (this.comboBoxMain.getSelectedIndex() == 0) {
             System.out.println("FIREBIRD");
             this.panelColor.setBackground(Color.ORANGE);
-            db = new MySQLDatabase(dbName);
+            db = new FirebirdDatabase(dbName);
         } else if (this.comboBoxMain.getSelectedIndex() == 1) {
             System.out.println("MARIADB");
             this.panelColor.setBackground(Color.GRAY);
             db = new MariaDBDatabase(dbName);
-        } else if (this.comboBoxMain.getSelectedIndex() == 3) {
+        } else if (this.comboBoxMain.getSelectedIndex() == 2) {
             System.out.println("MYSQL");
             this.panelColor.setBackground(Color.BLUE);
-            db = new FirebirdDatabase(dbName);
+            db = new MySQLDatabase(dbName);
         } else {
             System.out.println("NADA");
         }
@@ -502,10 +489,12 @@ public class MainFrame extends javax.swing.JFrame implements Events {
     private javax.swing.JButton buttonRegresarGraficos;
     private javax.swing.JButton buttonRun;
     private javax.swing.JComboBox<String> comboBoxMain;
+    private javax.swing.JTextField fieldBlockSize;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -588,7 +577,7 @@ public class MainFrame extends javax.swing.JFrame implements Events {
         }
         long tiempoInicial = System.currentTimeMillis();
         // Crea una instancia de la clase InsertThread generalizada
-        InsertThread insertThread = new InsertThread(jProgressBar1, db, tableNames, cantidadRegistros, tiempoInicial, this);
+        InsertThread insertThread = new InsertThread(jProgressBar1, db, tableNames, cantidadRegistros, tiempoInicial, this, 5);
 
         // Inicia el hilo
         insertThread.start();

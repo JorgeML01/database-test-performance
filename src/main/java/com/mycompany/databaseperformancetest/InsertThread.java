@@ -14,14 +14,16 @@ public class InsertThread extends Thread {
     private int[] cantidadRegistros;
     private long tiempoInicial;
     private Events listener;
+    private int blockSize;
 
-    public InsertThread(JProgressBar progressBar, DatabaseManager db, String[] tableNames, int[] cantidadRegistros, long tiempoInicial, Events listener) {
+    public InsertThread(JProgressBar progressBar, DatabaseManager db, String[] tableNames, int[] cantidadRegistros, long tiempoInicial, Events listener, int blockSize) {
         this.progressBar = progressBar;
         this.db = db;
         this.tableNames = tableNames;
         this.cantidadRegistros = cantidadRegistros;
         this.tiempoInicial = tiempoInicial;
         this.listener = listener;
+        this.blockSize = blockSize;
     }
 
     @Override
